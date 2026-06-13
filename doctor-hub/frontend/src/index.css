@@ -1,0 +1,1262 @@
+/* ================================================================
+   DOCTOR HUB — "Token & File" Design System
+   Clinic-inspired: token slips, patient files, rubber stamps,
+   prescription pads. Paper-tactile. Trustworthy. Specific.
+   ================================================================ */
+
+/* ---- Design Tokens ---- */
+:root {
+  /* Color Palette — Section 4.1 */
+  --bg: #F5F6F3;
+  --surface: #FFFFFF;
+  --ink: #1D2420;
+  --ink-soft: #5C6660;
+  --primary: #23534A;
+  --primary-soft: #E3ECE8;
+  --accent: #D1502B;
+  --accent-soft: #FBE7DE;
+  --line: #DDE1DC;
+  --success: #3D7A5C;
+  --pending: #C8932E;
+  --danger: #B6453A;
+
+  /* Treatment-type accents */
+  --allopathic: #3B6E8F;
+  --homeopathic: #8B6FB0;
+  --herbal: #5B8A52;
+
+  /* Typography — Section 4.2 */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Source Sans 3', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  /* Spacing, Radius, Elevation — Section 4.3 */
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+
+  --shadow-card: 0 1px 2px rgba(29,36,32,0.04), 0 2px 8px rgba(29,36,32,0.06);
+  --shadow-raised: 0 2px 4px rgba(29,36,32,0.06), 0 8px 24px rgba(29,36,32,0.08);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 150ms var(--ease-out);
+  --transition-normal: 200ms var(--ease-out);
+}
+
+/* ---- Base Resets ---- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ---- Typography ---- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+h1 { font-size: 2.75rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.125rem; }
+
+p { color: var(--ink-soft); }
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+a:hover { color: var(--ink); }
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 100px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-soft); }
+
+/* ---- Animations ---- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes stampLand {
+  0% { transform: rotate(0deg) scale(1.3); opacity: 0; }
+  60% { transform: rotate(-4deg) scale(0.98); opacity: 1; }
+  100% { transform: rotate(-3deg) scale(1); opacity: 1; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-fade {
+  animation: fadeIn 0.3s var(--ease-out) forwards;
+}
+
+.animate-slide {
+  animation: slideInRight 0.3s var(--ease-out) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade, .animate-slide { animation: none; }
+  .stamp-animate { animation: none !important; }
+  .card:hover { transform: none !important; }
+}
+
+/* ---- Layout Utilities ---- */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- Grids ---- */
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+  .container { padding: 0 20px; }
+}
+
+/* ================================================================
+   CARDS — Paper stock feel: solid border, subtle shadow
+   ================================================================ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-raised);
+}
+
+/* Remove hover lift on interactive cards that are buttons/links */
+.card-static:hover {
+  transform: none;
+  box-shadow: var(--shadow-card);
+}
+
+/* Doctor card left-border accent (treatment type) */
+.card-allopathic { border-left: 3px solid var(--allopathic); }
+.card-homeopathic { border-left: 3px solid var(--homeopathic); }
+.card-herbal { border-left: 3px solid var(--herbal); }
+
+/* ================================================================
+   THE STAMP SYSTEM — Signature Element (Section 5.1)
+   Bordered badge, rotated -3°, uppercase, letterspaced,
+   double-ring border. THE one bold device.
+   ================================================================ */
+.stamp {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  transform: rotate(-3deg);
+  position: relative;
+  white-space: nowrap;
+  /* Double-ring: inner border via box-shadow, outer via border */
+  border: 1.5px solid currentColor;
+  box-shadow: inset 0 0 0 2px var(--surface), inset 0 0 0 3px currentColor;
+  background: transparent;
+  line-height: 1.4;
+}
+
+.stamp-success {
+  color: var(--success);
+}
+.stamp-pending {
+  color: var(--pending);
+}
+.stamp-danger {
+  color: var(--danger);
+}
+.stamp-accent {
+  color: var(--accent);
+}
+.stamp-primary {
+  color: var(--primary);
+}
+.stamp-muted {
+  color: var(--ink-soft);
+}
+
+/* Landing animation for verify/confirm actions */
+.stamp-animate {
+  animation: stampLand 200ms var(--ease-out) forwards;
+}
+
+/* Small stamp variant (for LOCKED on records) */
+.stamp-sm {
+  font-size: 0.6rem;
+  padding: 2px 6px;
+  transform: rotate(-2deg);
+}
+
+/* ================================================================
+   TOKEN-STUB CARDS — Appointment / Booking cards (Section 5.2)
+   Card with dashed perforation separating stub from details
+   ================================================================ */
+.token-stub {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.token-stub:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-raised);
+}
+
+.token-stub-number {
+  background: var(--primary-soft);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  min-width: 100px;
+  border-right: 1px dashed var(--line);
+  font-family: var(--font-mono);
+}
+
+.token-stub-number .token-id {
+  font-weight: 500;
+  font-size: 0.85rem;
+  color: var(--primary);
+}
+
+.token-stub-number .token-day {
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--ink);
+  letter-spacing: 0.05em;
+}
+
+.token-stub-number .token-time {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.token-stub-details {
+  flex: 1;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Cancelled appointment: desaturate the stub */
+.token-stub-cancelled {
+  filter: grayscale(0.6);
+  opacity: 0.7;
+}
+
+/* ================================================================
+   BUTTONS — Section 6
+   ================================================================ */
+.btn {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--primary-soft);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #ffffff;
+}
+.btn-primary:hover {
+  background: #1d453e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(35,83,74,0.2);
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+.btn-secondary:hover {
+  background: var(--primary-soft);
+}
+
+.btn-danger {
+  background: transparent;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}
+.btn-danger:hover {
+  background: rgba(182,69,58,0.06);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+.btn-outline:hover {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-accent {
+  background: var(--accent);
+  color: #ffffff;
+}
+.btn-accent:hover {
+  background: #b8432a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(209,80,43,0.2);
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius);
+  padding: 0;
+}
+
+.btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* ================================================================
+   FORMS & INPUTS — Section 6
+   ================================================================ */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 14px;
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-soft);
+}
+
+.form-input::placeholder {
+  color: var(--ink-soft);
+  opacity: 0.6;
+}
+
+.form-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+textarea.form-input {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235C6660' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+  padding-right: 36px;
+}
+
+/* Error messages — stamp-style X mark */
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(182,69,58,0.06);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+}
+.form-error::before {
+  content: '✕';
+  font-weight: 700;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.form-success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(61,122,92,0.06);
+  border: 1px solid var(--success);
+  color: var(--success);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+}
+
+.form-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary-soft);
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+}
+
+/* ================================================================
+   TABLES — Section 6
+   No zebra striping. 1px line bottom per row.
+   ================================================================ */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead th {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+
+tbody td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+
+tbody tr:hover {
+  background: var(--primary-soft);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ================================================================
+   BADGES — Treatment type tags (small, never full background)
+   ================================================================ */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  text-transform: capitalize;
+  border: 1px solid;
+}
+
+.tag-allopathic {
+  color: var(--allopathic);
+  border-color: var(--allopathic);
+  background: rgba(59,110,143,0.06);
+}
+.tag-homeopathic {
+  color: var(--homeopathic);
+  border-color: var(--homeopathic);
+  background: rgba(139,111,176,0.06);
+}
+.tag-herbal {
+  color: var(--herbal);
+  border-color: var(--herbal);
+  background: rgba(91,138,82,0.06);
+}
+
+/* Legacy badge classes mapped to stamp system */
+.badge { /* fallback for any remaining badge usage */ }
+.badge-pending { color: var(--pending); }
+.badge-uploaded { color: var(--pending); }
+.badge-verified { color: var(--success); }
+.badge-confirmed { color: var(--success); }
+.badge-completed { color: var(--primary); }
+.badge-cancelled { color: var(--danger); }
+.badge-rejected { color: var(--danger); }
+.badge-payment_uploaded { color: var(--pending); }
+
+/* ================================================================
+   LOADING SPINNER
+   ================================================================ */
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--line);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* ================================================================
+   LAYOUT ARCHITECTURE
+   Anonymous: top nav. Authenticated: left sidebar.
+   ================================================================ */
+.app-layout-anonymous {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.app-layout-anonymous .main-content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-layout-authenticated {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+}
+.app-layout-authenticated .main-content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 0;
+}
+
+/* ================================================================
+   NAVIGATION — Top bar (anonymous) / File-tab sidebar (auth)
+   ================================================================ */
+.main-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0;
+}
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.logo-icon {
+  background: var(--primary);
+  color: #fff;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo-text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+.logo-highlight {
+  color: var(--primary);
+}
+
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.menu-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-link {
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+.nav-link:hover {
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.menu-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-profile-widget {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.user-info .avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius);
+  background-color: var(--primary-soft);
+  border: 1px solid var(--line);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+}
+.user-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--ink);
+}
+
+.btn-logout-nav {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all var(--transition-fast);
+}
+.btn-logout-nav:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.auth-buttons-nav {
+  display: flex;
+  gap: 8px;
+}
+.btn-login-nav {
+  padding: 8px 16px;
+  font-size: 0.8rem;
+}
+.btn-register-nav {
+  padding: 8px 16px;
+  font-size: 0.8rem;
+}
+
+.mobile-toggle-btn {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile Drawer */
+.mobile-drawer {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  padding: 20px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: fadeIn 0.15s var(--ease-out) forwards;
+  box-shadow: var(--shadow-raised);
+}
+.nav-link-mobile {
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 10px 0;
+  display: block;
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+}
+.nav-link-mobile:hover { color: var(--primary); }
+.mobile-drawer-divider {
+  height: 1px;
+  background-color: var(--line);
+  margin: 8px 0;
+}
+.mobile-drawer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+}
+.mobile-auth-buttons {
+  display: flex;
+  gap: 10px;
+}
+.btn-logout-mobile {
+  flex: 1;
+  margin-left: 16px;
+}
+
+/* Theme toggle — hidden in Token & File (single theme) but keep for compat */
+.btn-theme-toggle {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .app-layout-authenticated {
+    flex-direction: column;
+  }
+  .app-layout-authenticated .main-content-wrapper {
+    padding: 20px 0;
+  }
+  .mobile-toggle-btn {
+    display: flex;
+  }
+  .navbar-menu {
+    display: none !important;
+  }
+  .main-navbar {
+    padding: 10px 0;
+  }
+}
+
+/* ================================================================
+   FILE-TAB SIDEBAR — Desktop authenticated layout (Section 5.3)
+   Active item extends past sidebar edge with raised shadow.
+   ================================================================ */
+@media (min-width: 993px) {
+  .app-layout-authenticated .main-navbar {
+    width: 260px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    left: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--line);
+    border-bottom: none;
+    padding: 32px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+  }
+
+  .app-layout-authenticated .navbar-container {
+    flex-direction: column;
+    align-items: stretch;
+    height: 100%;
+    padding: 0 20px;
+    gap: 32px;
+  }
+
+  .app-layout-authenticated .navbar-logo {
+    justify-content: flex-start;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .app-layout-authenticated .navbar-menu {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+    flex: 1;
+    gap: 32px;
+  }
+
+  .app-layout-authenticated .menu-links {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+  }
+
+  /* File-tab nav items */
+  .app-layout-authenticated .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    border-radius: var(--radius) 0 0 var(--radius);
+    background: transparent;
+    color: var(--ink-soft);
+    font-size: 0.875rem;
+    position: relative;
+    margin-right: -20px; /* extend to edge */
+    transition: all 120ms var(--ease-out);
+  }
+
+  .app-layout-authenticated .nav-link:hover {
+    background: var(--primary-soft);
+    color: var(--primary);
+    padding-left: 20px;
+  }
+
+  /* Active file-tab: extends 6px past sidebar, raised shadow */
+  .app-layout-authenticated .nav-link.active,
+  .app-layout-authenticated .nav-link[aria-current="page"] {
+    background: var(--surface);
+    color: var(--primary);
+    font-weight: 700;
+    box-shadow: var(--shadow-raised);
+    margin-right: -26px;
+    padding-right: 26px;
+    z-index: 2;
+    border: 1px solid var(--line);
+    border-right: none;
+  }
+
+  .app-layout-authenticated .menu-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+    margin-top: auto;
+  }
+
+  .app-layout-authenticated .user-profile-widget {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .app-layout-authenticated .user-info {
+    justify-content: flex-start;
+  }
+  .app-layout-authenticated .btn-logout-nav {
+    width: 100%;
+    justify-content: center;
+    padding: 8px;
+  }
+}
+
+/* ================================================================
+   AUTH PAGES — Split layout (Section 7)
+   Left: primary panel. Right: form on bg.
+   ================================================================ */
+.auth-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  min-height: 100vh;
+}
+
+.auth-panel-brand {
+  background: var(--primary);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 64px 48px;
+}
+.auth-panel-brand h1 {
+  font-family: var(--font-display);
+  color: #ffffff;
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+}
+.auth-panel-brand p {
+  color: rgba(255,255,255,0.75);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 380px;
+}
+.auth-panel-brand .logo-wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 48px;
+  letter-spacing: 0.02em;
+  opacity: 0.9;
+}
+
+.auth-panel-form {
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+}
+
+.auth-form-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 40px;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* File-tab role selector for Register */
+.role-tabs {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.role-tab {
+  flex: 1;
+  padding: 10px 16px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.85rem;
+  border: none;
+  cursor: pointer;
+  background: var(--bg);
+  color: var(--ink-soft);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.role-tab:not(:last-child) {
+  border-right: 1px solid var(--line);
+}
+.role-tab.active {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .auth-layout {
+    grid-template-columns: 1fr;
+  }
+  .auth-panel-brand {
+    padding: 32px;
+    min-height: auto;
+  }
+  .auth-panel-form {
+    padding: 24px;
+  }
+  .auth-form-card {
+    padding: 24px;
+  }
+}
+
+/* ================================================================
+   MODAL / DIALOG — Section 6
+   12px radius, raised shadow, top accent bar.
+   ================================================================ */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(29,36,32,0.4);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-raised);
+  padding: 32px;
+  width: 90%;
+  position: relative;
+  animation: fadeIn 0.2s var(--ease-out) forwards;
+  /* Top accent bar */
+  border-top: 4px solid var(--primary);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-soft);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+.modal-close:hover { color: var(--ink); }
+
+/* ================================================================
+   MEDICAL HISTORY TIMELINE — Section 7
+   Left rail dates, connecting line, LOCKED stamp.
+   ================================================================ */
+.timeline {
+  position: relative;
+  padding-left: 120px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 100px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--line);
+}
+.timeline-entry {
+  position: relative;
+  margin-bottom: 24px;
+}
+.timeline-date {
+  position: absolute;
+  left: -120px;
+  top: 4px;
+  width: 90px;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  line-height: 1.3;
+}
+.timeline-dot {
+  position: absolute;
+  left: -24px;
+  top: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 2px var(--primary);
+}
+.timeline-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  position: relative;
+}
+
+/* ================================================================
+   PRESCRIPTION PAD — Section 7 (Rx Pad layout)
+   Letterhead header, thin double rule, medicine table.
+   ================================================================ */
+.rx-pad {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.rx-pad-header {
+  padding: 20px 24px;
+  border-bottom: 3px double var(--line);
+}
+.rx-pad-body {
+  padding: 20px 24px;
+}
+
+/* ================================================================
+   UTILITY CLASSES
+   ================================================================ */
+.text-primary { color: var(--primary); }
+.text-accent { color: var(--accent); }
+.text-ink { color: var(--ink); }
+.text-ink-soft { color: var(--ink-soft); }
+.text-success { color: var(--success); }
+.text-pending { color: var(--pending); }
+.text-danger { color: var(--danger); }
+.bg-primary-soft { background: var(--primary-soft); }
+.bg-accent-soft { background: var(--accent-soft); }
+.border-line { border: 1px solid var(--line); }
+
+/* Card stat — left accent bar */
+.card-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  padding-left: 16px;
+}
+.card-stat::before {
+  content: '';
+  position: absolute;
+  width: 3px;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: var(--primary);
+  border-radius: 100px;
+}
+
+/* Section divider */
+.divider {
+  height: 1px;
+  background: var(--line);
+  margin: 16px 0;
+}
+
+/* Dashed drop zone (perforation motif for uploads) */
+.drop-zone {
+  border: 2px dashed var(--line);
+  border-radius: var(--radius);
+  padding: 32px;
+  text-align: center;
+  color: var(--ink-soft);
+  transition: border-color var(--transition-fast);
+}
+.drop-zone:hover {
+  border-color: var(--primary);
+}
+
+/* Consultation fee callout */
+.fee-callout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--primary-soft);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(35,83,74,0.15);
+}
+
+/* ================================================================
+   RESPONSIVE: Desktop sidebar content area
+   ================================================================ */
+@media (min-width: 993px) {
+  .app-layout-authenticated .main-content-wrapper {
+    overflow-y: auto;
+  }
+}
+
+/* Glass class — kept as no-op for backward compatibility */
+.glass {
+  /* No glassmorphism in Token & File system */
+}
