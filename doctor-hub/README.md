@@ -1,10 +1,8 @@
 # 🏥 Doctor Hub
 
 A production-style **healthcare consultation and patient history management system** where patients can search doctors, book appointments, share medical histories, and receive prescriptions — all within a secure, role-based platform.
-
-**Live Demo:** [https://doctor-hub-frontend.vercel.app](https://doctor-hub-frontend.vercel.app)  
-**Backend API:** [https://doctor-hub-backend.onrender.com](https://doctor-hub-backend.onrender.com)  
-**GitHub Repository:** [https://github.com/yourusername/doctor-hub](https://github.com/yourusername/doctor-hub)
+[
+**Live Demo:** [https://doctor-hub-frontend.vercel.app](https://doctor-hub-x3vv.vercel.app/)  
 
 ---
 
@@ -564,16 +562,6 @@ This is a semester project for educational purposes. Feel free to use as a refer
 
 ---
 
-## 📞 Support
-
-For issues, questions, or feature requests:
-
-1. **GitHub Issues:** [Create an issue](https://github.com/yourusername/doctor-hub/issues)
-2. **Email:** your.email@example.com
-3. **Documentation:** Check `/docs/` folder first
-
----
-
 ## 🔄 Future Enhancements
 
 - [ ] AI disease prediction (symptom → doctor suggestion)
@@ -588,6 +576,3 @@ For issues, questions, or feature requests:
 - [ ] SMS notifications
 
 ---
-
-**Last Updated:** June 2026  
-**Status:** ✅ Complete & Production-Ready
